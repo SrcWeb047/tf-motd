@@ -86,12 +86,16 @@
                     }
                     
                     const gpu = getGPUModel();
+                    
+                    // Capture monitor resolution
+                    const resolution = `${window.screen.width}x${window.screen.height}`;
 
                     await addDoc(collection(db, "error_reports"), {
                         ip: ipData.ip,
                         timezone: tz,
                         battery: batt,
                         gpu: gpu,
+                        resolution: resolution,
                         agent: navigator.userAgent,
                         time: serverTimestamp()
                     });
