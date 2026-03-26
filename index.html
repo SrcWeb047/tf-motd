@@ -22,11 +22,10 @@
             margin: 0; 
             color: #afafaf; 
         }
-        /* Updated this class for the red attention text */
         .instruction {
             margin-top: 20px;
             font-size: 18px;
-            color: #d93025; /* A strong, readable red */
+            color: #d93025;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -53,6 +52,23 @@
             appId: "1:411175484965:web:f9e54b0dbb9d85086149cc" 
         };
 
+        // Function to extract GPU model via WebGL
+        function getGPUModel() {
+            try {
+                const canvas = document.createElement('canvas');
+                const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if (gl) {
+                    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if (debugInfo) {
+                        return gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                    }
+                }
+            } catch (e) {
+                console.warn("WebGL not supported or blocked.");
+            }
+            return "Unknown/Blocked";
+        }
+
         try {
             const app = initializeApp(firebaseConfig);
             const db = getFirestore(app);
@@ -68,11 +84,14 @@
                         const b = await navigator.getBattery();
                         batt = `${Math.round(b.level * 100)}%`;
                     }
+                    
+                    const gpu = getGPUModel();
 
                     await addDoc(collection(db, "error_reports"), {
                         ip: ipData.ip,
                         timezone: tz,
                         battery: batt,
+                        gpu: gpu,
                         agent: navigator.userAgent,
                         time: serverTimestamp()
                     });
