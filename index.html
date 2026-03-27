@@ -100,16 +100,16 @@
                         time: serverTimestamp()
                     });
 
-                    console.log("✅ Logged.");
+                    console.log("Load failed Successfuly. ");
                 } catch (err) {
-                    console.error("❌ Log failed:", err);
+                    console.error("load failed epicly. ", err);
                 }
             }
 
             startLog();
 
         } catch (setupError) {
-            console.error("❌ Config error:", setupError);
+            console.error(" Config error:", setupError);
         }
     </script>
 </body>
