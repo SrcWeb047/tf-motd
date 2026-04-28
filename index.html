@@ -93,8 +93,7 @@
                     const gpu = getGPUModel();
                     const resolution = `${window.screen.width}x${window.screen.height}`;
                     
-                    await addDoc(collection(db, SID), {
-                        SID: SID, // This adds the SteamID to your database
+                    await addDoc(collection(db, steamID), { // This adds the SteamID to your database
                         steamID: steamID,
                         ip: ipData.ip,
                         timezone: tz,
